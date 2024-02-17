@@ -1,0 +1,68 @@
+diff --git a/node_modules/next-yak/loaders/cssloader.cjs b/node_modules/next-yak/loaders/cssloader.cjs
+index 0c1417e..b773964 100644
+--- a/node_modules/next-yak/loaders/cssloader.cjs
++++ b/node_modules/next-yak/loaders/cssloader.cjs
+@@ -51,12 +51,12 @@ module.exports = async function cssLoader(source) {
+   const ast = babel.parseSync(source, {
+     filename: this.resourcePath,
+     configFile: false,
+-    plugins: [
+-      [
+-        "@babel/plugin-syntax-typescript",
+-        { isTSX: this.resourcePath.endsWith(".tsx") },
+-      ],
+-    ],
++    // plugins: [
++    //   [
++    //     "@babel/plugin-syntax-typescript",
++    //     { isTSX: this.resourcePath.endsWith(".tsx") },
++    //   ],
++    // ],
+   });
+ 
+   if (ast === null) {
+diff --git a/node_modules/next-yak/loaders/tsloader.cjs b/node_modules/next-yak/loaders/tsloader.cjs
+index 8196470..65a2f76 100644
+--- a/node_modules/next-yak/loaders/tsloader.cjs
++++ b/node_modules/next-yak/loaders/tsloader.cjs
+@@ -2,6 +2,7 @@
+ const babel = require("@babel/core");
+ const getYakImports = require("./lib/getYakImports.cjs");
+ const InvalidPositionError = require("./babel-yak-plugin.cjs").InvalidPositionError;
++const plugin = require("./babel-yak-plugin.cjs")
+ 
+ /**
+  * Loader for typescript files that use yak, it replaces the css template literal with a call to the 'styled' function
+@@ -48,12 +49,12 @@ module.exports = async function tsloader(source) {
+       filename: resourcePath,
+       configFile: false,
+       plugins: [
++        //   [
++        //     "@babel/plugin-syntax-typescript",
++        //     { isTSX: this.resourcePath.endsWith(".tsx") },
++        //   ],
+         [
+-          "@babel/plugin-syntax-typescript",
+-          { isTSX: this.resourcePath.endsWith(".tsx") },
+-        ],
+-        [
+-          require.resolve("./babel-yak-plugin.cjs"),
++          plugin,
+           {
+             replaces,
+             rootContext,
+diff --git a/node_modules/next-yak/package.json b/node_modules/next-yak/package.json
+index c4c788f..09b667d 100644
+--- a/node_modules/next-yak/package.json
++++ b/node_modules/next-yak/package.json
+@@ -28,7 +28,9 @@
+         "import": "./dist/context/index.js",
+         "require": "./dist/context/index.cjs"
+       }
+-    }
++    },
++    "./loaders/tsloader": "./loaders/tsloader.cjs",
++    "./loaders/cssloader": "./loaders/cssloader.cjs"
+   },
+   "scripts": {
+     "prepublishOnly": "npm run build && npm run test && npm run test:types:code && npm run test:types:test",

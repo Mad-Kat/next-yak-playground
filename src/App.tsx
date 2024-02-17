@@ -2,10 +2,11 @@ import * as monaco from "monaco-editor";
 import { useEffect, useRef, useState } from 'react';
 import { PanelGroup, Panel, PanelResizeHandle } from "react-resizable-panels";
 import "./App.css"
-import { setupMonaco } from "./monaco";
+import type { setupMonaco } from "./monaco";
+import { compileCSS } from "./compileCSS";
+import { compileTS } from "./compileTS";
 
-const highlighter = await setupMonaco();
-const defaultValue = `import { styled } from "next-yak";
+const defaultInputValue = `import { styled } from "next-yak";
 
 export const Button = styled.button\`
   font-size: 2rem;
@@ -16,19 +17,33 @@ export const Button = styled.button\`
   }
 \`;`;
 
-function App() {
+const defaultOutputTSValue = `import { styled } from "next-yak";
+import __styleYak from "./file.yak.module.css!=!./file?./file.yak.module.css";
+export const Button = styled.button(__styleYak.Button);`
+
+const defaultOutputCSSValue = `.Button {
+  font-size: 2rem;
+  font-weight: bold;
+  color: blue;
+  &:hover {
+    color: red;
+  }
+}`
+
+function App({ highlighter }: { highlighter: Awaited<ReturnType<typeof setupMonaco>> }) {
   const inputEditor = useRef<HTMLDivElement>(null);
-  const [outputTS, setOutputTS] = useState<string>(defaultValue);
+  const [outputTS, setOutputTS] = useState<string>(defaultOutputTSValue);
+  const [outputCSS, setOutputCSS] = useState<string>(defaultOutputCSSValue);
 
   useEffect(() => {
     if (monaco.editor.getModels().length > 0) {
       return;
     }
 
-    const model = monaco.editor.createModel(defaultValue, "typescript", monaco.Uri.parse("file:///input.tsx"));
+    const model = monaco.editor.createModel(defaultInputValue, "typescript", monaco.Uri.parse("file:///input.tsx"));
 
     const editor = monaco.editor.create(inputEditor.current!, {
-      value: defaultValue,
+      value: defaultInputValue,
       language: "typescript",
       theme: "vitesse-dark",
       automaticLayout: true,
@@ -47,7 +62,9 @@ function App() {
     });
 
     editor.onDidChangeModelContent(() => {
-      setOutputTS(editor.getModel()?.getValue() ?? "");
+      const value = editor.getModel()?.getValue() ?? "";
+      compileTS(value).then(setOutputTS);
+      compileCSS(value).then(setOutputCSS);
     })
   }, [])
   return (
@@ -86,10 +103,10 @@ function App() {
             }} >
               <p>Output CSS</p>
               <div dangerouslySetInnerHTML={{
-                __html: highlighter.codeToHtml(".hello {\n\tcolor: red;\n}", {
+                __html: highlighter.codeToHtml(outputCSS, {
                   lang: "css", theme: "vitesse-dark"
                 })
-              }} style={{ width: "100%", height: "100%", overflow: 'scroll' }}></div>
+              }} style={{ width: "100%", height: "100%", overflow: "scroll" }}></div>
             </Panel>
           </PanelGroup>
         </Panel>
