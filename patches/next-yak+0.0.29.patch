@@ -1,46 +1,45 @@
 diff --git a/node_modules/next-yak/loaders/cssloader.cjs b/node_modules/next-yak/loaders/cssloader.cjs
-index 0c1417e..b773964 100644
+index 0c1417e..a0c7fe4 100644
 --- a/node_modules/next-yak/loaders/cssloader.cjs
 +++ b/node_modules/next-yak/loaders/cssloader.cjs
-@@ -51,12 +51,12 @@ module.exports = async function cssLoader(source) {
-   const ast = babel.parseSync(source, {
-     filename: this.resourcePath,
-     configFile: false,
--    plugins: [
--      [
--        "@babel/plugin-syntax-typescript",
--        { isTSX: this.resourcePath.endsWith(".tsx") },
--      ],
--    ],
-+    // plugins: [
-+    //   [
-+    //     "@babel/plugin-syntax-typescript",
-+    //     { isTSX: this.resourcePath.endsWith(".tsx") },
-+    //   ],
-+    // ],
-   });
+@@ -12,6 +12,7 @@ const {
+   getConstantName,
+   getConstantValues,
+ } = require("./lib/getConstantValues.cjs");
++const babelPluginTypeScript = require('@babel/plugin-syntax-typescript');
  
-   if (ast === null) {
+ /**
+  * @typedef {{ selector: string, hasParent: boolean, quasiCode: Array<{ insideCssValue: boolean, code: string }>, cssPartExpressions: { [key: number]: CssPartExpression[]} }} CssPartExpression
+@@ -53,7 +54,7 @@ module.exports = async function cssLoader(source) {
+     configFile: false,
+     plugins: [
+       [
+-        "@babel/plugin-syntax-typescript",
++        babelPluginTypeScript,
+         { isTSX: this.resourcePath.endsWith(".tsx") },
+       ],
+     ],
 diff --git a/node_modules/next-yak/loaders/tsloader.cjs b/node_modules/next-yak/loaders/tsloader.cjs
-index 8196470..65a2f76 100644
+index 8196470..6c05517 100644
 --- a/node_modules/next-yak/loaders/tsloader.cjs
 +++ b/node_modules/next-yak/loaders/tsloader.cjs
-@@ -2,6 +2,7 @@
+@@ -2,6 +2,8 @@
  const babel = require("@babel/core");
  const getYakImports = require("./lib/getYakImports.cjs");
  const InvalidPositionError = require("./babel-yak-plugin.cjs").InvalidPositionError;
 +const plugin = require("./babel-yak-plugin.cjs")
++const babelPluginTypeScript = require('@babel/plugin-syntax-typescript');
  
  /**
   * Loader for typescript files that use yak, it replaces the css template literal with a call to the 'styled' function
-@@ -48,12 +49,12 @@ module.exports = async function tsloader(source) {
+@@ -48,12 +50,12 @@ module.exports = async function tsloader(source) {
        filename: resourcePath,
        configFile: false,
        plugins: [
-+        //   [
-+        //     "@babel/plugin-syntax-typescript",
-+        //     { isTSX: this.resourcePath.endsWith(".tsx") },
-+        //   ],
++          [
++            babelPluginTypeScript,
++            { isTSX: this.resourcePath.endsWith(".tsx") },
++          ],
          [
 -          "@babel/plugin-syntax-typescript",
 -          { isTSX: this.resourcePath.endsWith(".tsx") },
@@ -52,7 +51,7 @@ index 8196470..65a2f76 100644
              replaces,
              rootContext,
 diff --git a/node_modules/next-yak/package.json b/node_modules/next-yak/package.json
-index c4c788f..09b667d 100644
+index c4c788f..8da6bda 100644
 --- a/node_modules/next-yak/package.json
 +++ b/node_modules/next-yak/package.json
 @@ -28,7 +28,9 @@
