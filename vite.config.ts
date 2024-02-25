@@ -14,7 +14,7 @@ export default defineConfig({
       },
     }),
   ],
-  optimizeDeps: {
-    include: ["next-yak/loaders/cssloader"],
+  build: {
+    minify: 'terser',
   },
 });
