@@ -14,13 +14,7 @@ export default defineConfig({
       },
     }),
   ],
-  optimizeDeps: {
-    include: ["@babel/core", "next-yak/tsloader", "next-yak/cssloader"],
-    needsInterop: ["@babel/core", "next-yak/tsloader", "next-yak/cssloader"],
-
-    force: true,
-  },
   build: {
-    minify: false,
+    minify: "terser",
   },
 });
