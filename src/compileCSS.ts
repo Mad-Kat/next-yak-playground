@@ -1,5 +1,4 @@
-// @ts-ignore
-import cssLoader from "next-yak/loaders/cssloader";
+import cssLoader from "next-yak/cssloader";
 
 export const compileCSS = async (css: string) => {
   const loaderContext = {
@@ -15,6 +14,12 @@ export const compileCSS = async (css: string) => {
           xxl: "@media (min-width: 1536px)",
         },
       };
+    },
+    async: () => (err: unknown, result: unknown) => {
+      if (err) {
+        throw err;
+      }
+      return result;
     },
   };
   return await cssLoader.call(loaderContext, css);

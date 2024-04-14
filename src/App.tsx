@@ -19,7 +19,17 @@ export const Button = styled.button\`
 
 const defaultOutputTSValue = `import { styled } from "next-yak";
 import __styleYak from "./file.yak.module.css!=!./file?./file.yak.module.css";
-export const Button = styled.button(__styleYak.Button);`
+export const Button =
+/*YAK Extracted CSS:
+.Button {
+  font-size: 2rem;
+  font-weight: bold;
+  color: blue;
+  &:hover {
+    color: red;
+  }
+}*/
+styled.button(__styleYak.Button);`
 
 const defaultOutputCSSValue = `.Button {
   font-size: 2rem;
@@ -63,8 +73,8 @@ function App({ highlighter }: { highlighter: Awaited<ReturnType<typeof setupMona
 
     editor.onDidChangeModelContent(() => {
       const value = editor.getModel()?.getValue() ?? "";
-      compileTS(value).then(setOutputTS);
-      compileCSS(value).then(setOutputCSS);
+      compileTS(value).then(e => e && setOutputTS(e));
+      compileCSS(value).then(e => e && setOutputCSS(e));
     })
   }, [])
   return (

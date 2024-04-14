@@ -11,6 +11,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
+    "@babel/core": "^7.24.4",
     "monaco-editor": "^0.46.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -26,7 +27,7 @@
     "eslint": "^8.56.0",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.5",
-    "next-yak": "^0.0.29",
+    "next-yak": "0.1.0",
     "patch-package": "^8.0.0",
     "shiki": "^1.1.1",
     "terser": "^5.28.1",

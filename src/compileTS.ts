@@ -1,5 +1,4 @@
-// @ts-ignore
-import tsLoader from "next-yak/loaders/tsloader";
+import tsLoader from "next-yak/tsloader";
 
 export const compileTS = async (code: string) => {
   const loaderContext = {
@@ -16,7 +15,7 @@ export const compileTS = async (code: string) => {
         },
       };
     },
-    async: () => (err: any, result: any, _: any) => {
+    async: () => (err: unknown, result: unknown) => {
       if (err) {
         throw err;
       }

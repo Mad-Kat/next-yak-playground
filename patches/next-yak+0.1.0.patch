@@ -1,0 +1,59 @@
+diff --git a/node_modules/next-yak/dist/loaders/cssloader.js b/node_modules/next-yak/dist/loaders/cssloader.js
+index 90b5f90..05e73e2 100644
+--- a/node_modules/next-yak/dist/loaders/cssloader.js
++++ b/node_modules/next-yak/dist/loaders/cssloader.js
+@@ -1055,12 +1055,14 @@ async function tsloader(source) {
+   );
+   let result = null;
+   try {
++    const babel = await import("@babel/core").then((m) => m.default);
++    const babelTypescriptPlugin = await import("@babel/plugin-syntax-typescript").then((m) => m.default);
+     result = babel.transformSync(source, {
+       filename: resourcePath,
+       configFile: false,
+       plugins: [
+         [
+-          "@babel/plugin-syntax-typescript",
++          babelTypescriptPlugin,
+           { isTSX: this.resourcePath.endsWith(".tsx") }
+         ],
+         [
+diff --git a/node_modules/next-yak/dist/loaders/tsloader.js b/node_modules/next-yak/dist/loaders/tsloader.js
+index 987ae44..0f2a9b1 100644
+--- a/node_modules/next-yak/dist/loaders/tsloader.js
++++ b/node_modules/next-yak/dist/loaders/tsloader.js
+@@ -1055,12 +1055,14 @@ async function tsloader(source) {
+   );
+   let result = null;
+   try {
++    const babel = await import("@babel/core").then((m) => m.default);
++    const babelTypescriptPlugin = await import("@babel/plugin-syntax-typescript").then((m) => m.default);
+     result = babel.transformSync(source, {
+       filename: resourcePath,
+       configFile: false,
+       plugins: [
+         [
+-          "@babel/plugin-syntax-typescript",
++          babelTypescriptPlugin,
+           { isTSX: this.resourcePath.endsWith(".tsx") }
+         ],
+         [
+diff --git a/node_modules/next-yak/package.json b/node_modules/next-yak/package.json
+index 00df254..dc64233 100644
+--- a/node_modules/next-yak/package.json
++++ b/node_modules/next-yak/package.json
+@@ -33,6 +33,14 @@
+         "import": "./dist/context/index.js",
+         "require": "./dist/context/index.cjs"
+       }
++    },
++    "./tsloader": {
++      "import": "./dist/loaders/tsloader.js",
++      "require": "./dist/loaders/tsloader.cjs"
++    },
++    "./cssloader": {
++      "import": "./dist/loaders/cssloader.js",
++      "require": "./dist/loaders/cssloader.cjs"
+     }
+   },
+   "scripts": {
