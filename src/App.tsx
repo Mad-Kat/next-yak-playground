@@ -114,7 +114,8 @@ function App({ highlighter }: { highlighter: Awaited<ReturnType<typeof setupMona
               <p>Output CSS</p>
               <div dangerouslySetInnerHTML={{
                 __html: highlighter.codeToHtml(outputCSS, {
-                  lang: "css", theme: "vitesse-dark"
+                  // better highlighting than css
+                  lang: "css-styled", theme: "vitesse-dark"
                 })
               }} style={{ width: "100%", height: "100%", overflow: "scroll" }}></div>
             </Panel>
